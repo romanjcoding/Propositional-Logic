@@ -21,16 +21,6 @@ class Connective {
 public:
     explicit Connective(std::initializer_list<bool> tv) : m_table(tv) {}
 
-    bool result(const std::vector<bool>& inputs) const { 
-        const std::size_t arity = inputs.size();
-        if ((1u << arity) != m_size) {
-            throw std::invalid_argument("Inputs do not match the size of connective");
-        }
-        std::size_t idx = 0;
-        for (bool b : inputs) { idx = (idx << 1) | (b ? 1u : 0u); }
-        return m_table[idx];
-    }
-
     const std::vector<bool>& get_table() const { return m_table; }
     const size_t get_size() const { return m_size; }
 

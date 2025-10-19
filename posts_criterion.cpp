@@ -23,7 +23,7 @@ bool is_monotonic(const Connective& f) {
     for (size_t x = 0; x < length; x++) {
         for (size_t y = 0; y < length; y++) {
             // x >= y
-            if ((x & y) == x && truth_table[x] > truth_table[y]) { return false; }
+            if ((x | y) == x && truth_table[x] > truth_table[y]) { return false; }
         }
     }
     return true;
