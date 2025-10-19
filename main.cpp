@@ -1,6 +1,7 @@
 /* 
-    -TODO: print_table() and result() DRY
-    -
+    TODO: 
+    -print_table() and result() DRY
+    -is_monotonic() with caching? 
     -
 */
 
@@ -40,6 +41,9 @@ public:
         return m_table[idx];
     }
 
+    const std::vector<bool>& get_table() const { return m_table; }
+    const size_t get_size() const { return m_size; }
+
     static char tf(bool b) { return b ? 'T' : 'F'; }
 
     void print_table() const {
@@ -72,8 +76,50 @@ public:
     }
 };
 
+bool is_preserving(const Connective& f) {
+    std::vector<bool> truth_table { f.get_table() };
+    return truth_table[0] == false || truth_table.at(f.get_size() - 1) == true;
+}
+
+bool is_self_dual(const Connective& f) {
+    const std::vector<bool> truth_table { f.get_table() };
+    size_t length = f.get_size();
+    for (size_t i = 0; i < (length / 2 + 1); i++) {
+
+        // since length - 1 = 01111..., ^ (XOR) will negative the bits of i
+        if (truth_table[i] == truth_table[(length - 1) ^ i]) { return false; }
+    }
+    return true;
+}
+
+bool is_monotonic(const Connective& f) {
+    const std::vector<bool> truth_table { f.get_table() };
+    for (size_t x = 0; x < f.get_size(); x++) {
+        for (size_t y = 0; y < f.get_size(); y++) {
+            // x >= y
+            if ((x & y) == x && truth_table[x] > truth_table[y]) { return false; }
+        }
+    }
+    return true;
+}
+
+bool is_affine(const Connective& f) {
+    return true;
+}
+
+
 int main() {
     Connective c_and({false, false, false, true});
+    Connective c_or({false, true, true, true});
+    Connective c_nand({true, true, true, false});
     c_and.print_table();
+    c_nand.print_table();
+    std::cout << std::boolalpha;
+    std::cout << is_preserving(c_and) << '\n';
+    std::cout << is_monotonic(c_and) << '\n';
+
+    std::cout << is_preserving(c_nand) << '\n';
+    std::cout << is_monotonic(c_nand) << '\n';
+
     return 0;
 }
