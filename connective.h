@@ -36,6 +36,7 @@ public:
 
     const std::vector<bool>& get_table() const { return m_table; }
     const size_t get_size() const { return m_size; }
+    const size_t get_arity() const { return m_arity; }
 
     static char tf(bool b) { return b ? 'T' : 'F'; }
 

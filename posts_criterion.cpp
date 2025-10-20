@@ -29,7 +29,17 @@ bool is_monotonic(const Connective& f) {
 }
 
 bool is_affine_naive(const Connective& f) {
-    const std::vector<bool> vec { compute_anf(f) };
+    const std::vector<bool> vec { compute_anf_naive(f) };
+    
+    for (size_t i = 1; i < vec.size(); i++) {
+        // i is not a power of two
+        if (vec.at(i) && (i & (i - 1)) != 0) { return false; }
+    }
+    return true;
+}
+
+bool is_affine_divide(const Connective& f) {
+    const std::vector<bool> vec { anf_divide_and_conquer(f) };
     
     for (size_t i = 1; i < vec.size(); i++) {
         // i is not a power of two

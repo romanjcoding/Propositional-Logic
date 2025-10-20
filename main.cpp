@@ -49,7 +49,7 @@ int main() {
         for (uint64_t mask = 0; mask < total; ++mask) {
             Connective c(arity, mask);
             if (!is_preserving(c) && !is_self_dual(c) &&
-                !is_monotonic(c) && !is_affine_naive(c)) {
+                !is_monotonic(c) && !is_affine_divide(c)) {
                 count++;
             }
 

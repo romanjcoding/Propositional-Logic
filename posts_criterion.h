@@ -7,3 +7,4 @@ bool is_preserving(const Connective& f);
 bool is_self_dual(const Connective& f);
 bool is_monotonic(const Connective& f);
 bool is_affine_naive(const Connective& f);
+bool is_affine_divide(const Connective& f);
