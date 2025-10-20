@@ -4,9 +4,10 @@
 #include <iostream>
 #include <sstream>
 
-std::vector<bool> compute_anf(const Connective& f) {
+std::vector<bool> compute_anf_naive(const Connective& f) {
     const std::vector<bool> truth_table { f.get_table() };
     const size_t length = f.get_size();
+
     std::vector<bool> result;
     result.reserve(length);
     for (size_t i = 0; i < length; i++) {
@@ -18,6 +19,21 @@ std::vector<bool> compute_anf(const Connective& f) {
         result.push_back(parity);
     }
     return result;
+}
+
+std::vector<bool> anf_divide_and_conquer(const Connective& f) {
+    std::vector<bool> truth_table = f.get_table();
+    const size_t arity = f.get_arity();
+    for (int k = 1; k <= arity; k++) {
+        for (int i = 0; i <= (1 << (arity - k)); i++) {
+            for (int j = 0; j <= (1 << (k - 1)) - 1; j++) {
+                truth_table[(1 << k)*i + (1 << (k-1)) + j] =
+              ( truth_table[(1 << k)*i + j]
+              + truth_table[(1 << k)*i + (1 << (k-1)) + j] ) % 2;
+            }
+        }
+    }
+    return truth_table;
 }
 
 void print_anf(const std::vector<bool>& coeffs) {
