@@ -29,7 +29,8 @@ void print_anf(const std::vector<bool>& coeffs) {
         if (mask == 0) {
             term << "1";
         } else {
-            size_t tmp = mask, bit = 0;
+            size_t tmp { mask };
+            size_t bit { 0 };
             while (tmp) {
                 if (tmp & 1u) {
                     term << "x" << bit;

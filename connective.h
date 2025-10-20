@@ -18,8 +18,21 @@ class Connective {
         return n;
     }
 
+    static std::vector<bool> make_table(unsigned arity, unsigned long long bits) {
+        size_t rows = 1ull << arity;
+        if (rows > 64) throw std::invalid_argument("Too many rows for bit mask.");
+        std::vector<bool> t(rows);
+        for (size_t i = 0; i < rows; ++i) {
+            t[i] = (bits >> i) & 1ull;
+        }
+        return t;
+    }
+
+
 public:
     explicit Connective(std::initializer_list<bool> tv) : m_table(tv) {}
+    explicit Connective(unsigned arity, unsigned long long bits)
+        : m_table(make_table(arity, bits)) {}
 
     const std::vector<bool>& get_table() const { return m_table; }
     const size_t get_size() const { return m_size; }
