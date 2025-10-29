@@ -3,16 +3,17 @@
 #include <vector>
 #include <iostream>
 #include <sstream>
+#include <cstdint>
 
-std::vector<bool> compute_anf_naive(const Connective& f) {
-    const std::vector<bool> truth_table { f.get_table() };
-    const size_t length = f.get_size();
+std::vector<uint8_t> compute_anf_naive(const Connective& f) {
+    const std::vector<uint8_t> truth_table { f.get_table() };
+    const size_t size { f.get_size() };
 
-    std::vector<bool> result;
-    result.reserve(length);
-    for (size_t i = 0; i < length; i++) {
+    std::vector<uint8_t> result;
+    result.reserve(size);
+    for (size_t i = 0; i < size; i++) {
         bool parity { 0 };
-        for (size_t j = 0; j < length; j++) {
+        for (size_t j = 0; j < size; j++) {
             // i >= j
             if ((i | j) == i) { parity ^= truth_table[j]; }
         }
@@ -21,22 +22,26 @@ std::vector<bool> compute_anf_naive(const Connective& f) {
     return result;
 }
 
-std::vector<bool> anf_divide_and_conquer(const Connective& f) {
-    std::vector<bool> truth_table = f.get_table();
+std::vector<uint8_t> anf_divide_and_conquer(const Connective& f) {
+    std::vector<uint8_t> a = f.get_table();
     const size_t arity = f.get_arity();
-    for (int k = 1; k <= arity; k++) {
-        for (int i = 0; i <= (1 << (arity - k)); i++) {
-            for (int j = 0; j <= (1 << (k - 1)) - 1; j++) {
-                truth_table[(1 << k)*i + (1 << (k-1)) + j] =
-              ( truth_table[(1 << k)*i + j]
-              + truth_table[(1 << k)*i + (1 << (k-1)) + j] ) % 2;
+
+    for (size_t k = 1; k <= arity; ++k) {
+        const size_t tmp = size_t{1} << k;           // block size
+        const size_t half = tmp >> 1;                // half block
+        const size_t outer = size_t{1} << (arity - k);   // number of blocks
+
+        for (size_t i = 0; i < outer; ++i) {
+            const size_t base = tmp * i;
+            for (size_t j = 0; j < half; ++j) {
+                a[base + half + j] ^= a[base + j];
             }
         }
     }
-    return truth_table;
+    return a;
 }
 
-void print_anf(const std::vector<bool>& coeffs) {
+void print_anf(const std::vector<uint8_t>& coeffs) {
     bool first = true;
     for (size_t mask = 0; mask < coeffs.size(); ++mask) {
         if (!coeffs[mask]) continue;
