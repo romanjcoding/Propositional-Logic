@@ -1,3 +1,5 @@
+// TODO. Sampling w/o replacement that scales on sample size
+
 #include "connective.h"
 #include "posts_criterion.h"
 #include "anf.h"
@@ -6,42 +8,67 @@
 #include <algorithm>
 #include <cstdint>
 #include <random>
-#include <string_view>
-#include <charconv>
+#include <vector>
+#include <cstdlib>
+
+// https://stackoverflow.com/questions/311703/algorithm-for-sampling-without-replacement
+void sample_without_replacement
+(   uint64_t population_size, 
+    uint64_t sample_size, 
+    std::vector<uint64_t>& samples
+) {
+    // Use Knuth's variable names
+    uint64_t& n { sample_size };
+    uint64_t& N { population_size };
+
+    int t { 0 }; // total input records dealt with
+    int m { 0 }; // number of items selected so far
+
+    std::default_random_engine re;
+    std::uniform_real_distribution<double> dist(0,1);
+
+    while (m < n) {
+        double u = dist(re); // call a uniform(0,1) random number generator
+        if ((N - t) * u >= n - m ) { t++; }
+        else {
+            samples[m] = t;
+            t++; 
+            m++;
+        }
+    }
+}
 
 int main(int argc, char** argv) {
-    if (argc < 2) { std::cerr << "usage: app <int> (arity), <double> (fraction sampled) \n"; return 1; }
-    std::string_view s = argv[1];
-    size_t arity{};
-    std::from_chars(s.data(), s.data() + s.size(), arity);
+
+    if (argc < 3) { std::cerr << "usage: app <int> (arity), <uint64_t> (fraction sampled) \n"; return 1; }
+    
+    const size_t arity       { static_cast<size_t>(std::stoi(argv[1])) };
+    const double sample_frac { std::stof(argv[2]) };
 
     const uint64_t rows { 1ull << arity };
+    if (rows > 64) {
+        std::cerr << "arity " << arity
+                  << " not supported: truth table requires more than 64 bits.\n";
+        return 1;
+    }
     const uint64_t total = { 1ull << rows };
 
-    const double sample_fraction = { 1.0 };
-    const uint64_t target { static_cast<uint64_t>(total * sample_fraction) };
-    const uint64_t samples { target };
+    const uint64_t num_samples { static_cast<uint64_t>(total * sample_frac) };
     uint64_t count_fc { 0 };
 
+    std::vector<uint64_t> samples(num_samples);
+    sample_without_replacement(total, num_samples, samples);
 
-    for (uint64_t s = 0; s < samples; ++s) {
-        Connective c(arity, s);
-
-        bool p = is_preserving(c);
-        bool sd = is_self_dual(c);
-        // bool mono_naive = is_monotonic(c);
-        bool mono_fast = is_monotonic_fast(c);
-        // bool aff_naive = is_affine_naive(c);
-        bool aff_fast = is_affine_divide(c);
-
-        bool is_fc { !p && !sd && !mono_fast && !aff_fast };    
-        if (is_fc) { count_fc++; }
+    for (int i = 0; i < num_samples; i++) {
+        Connective c(arity, samples[i]);
+        if (!is_preserving(c)     && 
+            !is_self_dual(c)      && 
+            !is_monotonic_fast(c) && 
+            !is_affine_divide(c))  { count_fc++; }
     }
 
-    std::cout << "\n";
-
-    std::cout << "Sampled " << samples << " / " << total
+    std::cout << "Sampled " << num_samples << " / " << total
               << " (≈ " << std::setprecision(3) << std::fixed
-              << (100.0 * samples / double(total)) << "%) arity-" << arity << " functions.\n";
-    std::cout << count_fc << " were functionally complete (estimated by sampling).\n\n";
+              << (100.0 * num_samples / double(total)) << "%) arity-" << arity << " functions.\n";
+    std::cout << count_fc << " were functionally complete (estimate ~ " << count_fc * 1 / sample_frac << " total).\n";
 }
