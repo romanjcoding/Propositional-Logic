@@ -1,100 +1,62 @@
 // TODO. Sampling w/o replacement that scales on sample size
 // Fix how ugly the usage of generating_all [bool] is
 // Fix Arity 6 stuff
-// REFACTOR
+// REFACTOR/
+// progress bar
+// std::vector<uint64_t> tables
 
-#include "connective.h"
 #include "posts_criterion.h"
+#include "sampling.h"
 #include "timer.h"
 #include <iostream>
 #include <iomanip>
 #include <cstdint>
-#include <random>
 #include <vector>
 #include <string>
-#include <unordered_set>
 
-// https://stackoverflow.com/questions/311703/algorithm-for-sampling-without-replacement
-void sample_without_replacement_floyd(uint64_t N, uint64_t n, std::vector<uint64_t>& samples) {
-    samples.clear();
-    samples.reserve(n);
-
-    std::unordered_set<uint64_t> picked;
-    picked.reserve(static_cast<size_t>(n * 1.3));
-
-    std::mt19937_64 rng(std::random_device{}());
-    for (uint64_t i = N - n; i < N; ++i) {
-        std::uniform_int_distribution<uint64_t> dist(0, i);
-        uint64_t t = dist(rng);
-        if (!picked.insert(t).second) picked.insert(i);
-    }
-
-    samples.assign(picked.begin(), picked.end()); // order doesn't matter
+inline bool do_work(uint64_t table, size_t arity) {
+    if (is_preserving(table, arity))     { return false; } 
+    if (is_self_dual(table, arity))      { return false; } 
+    if (is_monotonic_fast(table, arity)) { return false; }
+    if (is_affine_divide(table, arity))  { return false; }
+    return true;
 }
+
+inline bool do_work(std::vector<uint64_t> table, size_t arity); // TODO
 
 int main(int argc, char** argv) {
 
     if (argc < 3) { std::cerr << "usage: app <int> (arity), <uint64_t> (fraction sampled) \n"; return 1; }
     
     const size_t arity { static_cast<size_t>(std::stoi(argv[1])) };
-    double sample_frac;
-    bool generating_all;
-    if (std::string(argv[2]) == "all") { 
-        sample_frac = 1.0;
-        generating_all = true; 
-    } 
-    else { 
-        sample_frac = std::stof(argv[2]);
-        generating_all = false; 
-    }
 
-    const uint64_t rows { 1ull << arity };
-    if (rows > 64) {
-        std::cerr << "arity " << arity
-                  << " not supported: truth table requires more than 64 bits.\n";
-        return 1;
-    }
-    const uint64_t total = { 1ull << rows };
+    double sample_frac;
+    if (std::string(argv[2]) == "all") { sample_frac = 1.0; } 
+    else { sample_frac = std::stof(argv[2]); }
+
+    const uint64_t rows  { 1ull << arity };
+    const uint64_t total { 1ull << rows };
 
     const uint64_t num_samples { static_cast<uint64_t>(total * sample_frac) };
-    std::vector<uint64_t> samples;
-    if (!generating_all) {
+    std::vector<std::vector<uint64_t>> samples;
+    if (sample_frac != 1.0) {
         {
             timer t;
-            sample_without_replacement_floyd(total, num_samples, samples);  
+            // sample_with_replacement(arity, num_samples, samples);  
         }
     }
 
     uint64_t count_fc { 0 };
-    if (!generating_all) {
+    if (sample_frac = 1.0) {
         timer t;
-        for (uint64_t table : samples) {
-            Connective c(arity, table);
-            if (!is_preserving(c) && 
-                !is_self_dual(c) && 
-                !is_monotonic_fast(c) && 
-                !is_affine_divide(c))  { count_fc++; }
+        for (uint64_t i = 0; i < total; i++) {
+            count_fc += do_work(i, arity);
         }
+
     } else {
-        // {
-        //     timer t;
-        //     for (uint64_t i = 0; i < total; i++) {
-        //         Connective c(arity, i);
-        //         if (!is_preserving(c) && 
-        //             !is_self_dual(c) && 
-        //             !is_monotonic_fast(c) && 
-        //             !is_affine_divide(c))  { count_fc++; }
-        //     }
-        // }
-        {
-            timer t;
-            for (uint64_t i = 0; i < total; i++) {
-                Connective c(arity, i);
-                if (!is_preserving(i, arity) && 
-                    !is_self_dual(i, arity) && 
-                    !is_monotonic_fast(i, arity) && 
-                    !is_affine_divide(i, arity))  { count_fc++; }
-            }
+        timer t;
+        for (std::vector<uint64_t> table : samples) {
+            // count_fc += do_work(table, arity);
         }
     }
 
