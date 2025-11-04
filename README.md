@@ -6,7 +6,7 @@ Let $B = \{0,1\}$, and $f: B^n → B$. Then, $f$ is functionally complete if non
 
 1. $f(1, 1, ..., 1) = 1$
 2. $f(0, 0, ..., 0) = 0$
-3. $f(x_1, x_2, ... x_n) = \neg f(\neg x_1, \neg x_2, ... \neg x_n)$, where $\neg u = 1 - u, \quad u \in B$
+3. $f(x_1, x_2, ... x_n) = \neg f(\neg x_1, \neg x_2, ... \neg x_n)$, where $\neg u = 1 - u, &nbsp; u \in B$
 4. $f$ is monotonic with respect to the partial order ⪯, where $(x_1, x_2, ... x_n) ⪯ (y_1, y_2, ... y_n)$ iff $x_i <= y_i$.
 5. $f$ is linear, and can be expressed as $f(x_1, x_2, ... x_n) = a_0 + a_1x_1 + ... + a_nx_n, \quad $a_i \in B$
 
