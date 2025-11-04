@@ -1,5 +1,5 @@
 # Propositional-Logic
-**Background**\
+## Background
 A connective is functionally complete if it can be composed to express all possible 2D truth tables. The prototypical examples of 2-ary (two paramater) connectives which are functionally complete are NAND and NOR. In the N-ary case, necessary and sufficient conditions for functional completeness are given by Post's theorem, outlined below.
 
 Let $B = {0,1}$, and $f: B^n → B$. Then, $f$ is functionally complete if none of the following hold:
