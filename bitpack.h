@@ -11,7 +11,7 @@ inline size_t table_size(size_t arity) {
 }
 
 inline size_t word_count(size_t arity) {
-    const size_t bits = table_size(arity);
+    const size_t bits { table_size(arity) };
     return (bits + 63) >> 6;
 }
 
@@ -22,6 +22,7 @@ inline bool get_bit(const std::vector<uint64_t>& T, size_t i) {
 inline void set_bit(std::vector<uint64_t>& T, size_t i, bool v) {
     const size_t w = i >> 6, b = i & 63;
     const uint64_t mask = 1ULL << b;
-    if (v) T[w] |= mask; else T[w] &= ~mask;
+    if (v) { T[w] |= mask; } 
+    else   { T[w] &= ~mask; }
 }
 }
