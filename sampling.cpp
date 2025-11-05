@@ -3,6 +3,7 @@
 #include <vector>
 #include <unordered_set>
 #include <cstdint>
+#include <iostream>
 
 // https://stackoverflow.com/questions/311703/algorithm-for-sampling-without-replacement
 void sample_without_replacement(uint64_t N, uint64_t n, std::vector<uint64_t>& samples) {
@@ -20,4 +21,18 @@ void sample_without_replacement(uint64_t N, uint64_t n, std::vector<uint64_t>& s
     }
 
     samples.assign(picked.begin(), picked.end());
+}
+
+std::vector<uint64_t> get_sample(size_t arity) {
+
+    size_t size {arity / 6 + 1};
+    std::vector<uint64_t> vec(size);
+
+    std::random_device rd;
+    std::mt19937_64 gen(rd());
+    std::uniform_int_distribution<uint64_t> dis;
+    for (int i = 0; i < size; i++) {
+        vec[i] = dis(gen);
+    }
+    return vec;
 }
