@@ -1,5 +1,4 @@
 #include "cli.h"
-#include <cli.h>
 #include <cstddef>
 #include <cstdint>
 #include <iostream>
@@ -7,10 +6,10 @@
 #include <string>
 
 void print_usage(const char* prog) {
-    std::cout << "usage: " << prog << " <arity:int 0..5> <uint64_t: num_samples | "": all>\n"
+    std::cout << "usage: " << prog << " <arity:int> <uint64_t: num_samples | \"all\">\n"
               << "examples:\n"
-              << "  " << prog << " 5 0.25\n"
-              << "  " << prog << " 3 all \n";
+              << "  " << prog << " 5 1000000 \n"
+              << "  " << prog << " 4 all \n";
 }
 
 void print_progress(uint64_t done, uint64_t total) {
