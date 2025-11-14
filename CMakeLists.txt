@@ -20,7 +20,7 @@ target_include_directories(propositional_logic
 )
 
 if (MSVC)
-    target_compile_options(propositional_logic PRIVATE /W4)
+    target_compile_options(propositional_logic PRIVATE /O2)
 else()
-    target_compile_options(propositional_logic PRIVATE -Wall -O3)
+    target_compile_options(propositional_logic PRIVATE -O3)
 endif()
