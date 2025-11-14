@@ -1,6 +1,6 @@
 # Propositional-Logic
 ## Background
-A Boolean connective is *functionally complete* if compositions of itself can express all possible truth tables. The prototypical examples of *2-ary* (two parameter) connectives which are functionally complete are NAND and NOR. In the *N-ary* case, necessary and sufficient conditions for functional completeness are given by Post's theorem, outlined below.
+A Boolean connective is *functionally complete* if compositions of itself can express all possible truth tables. The prototypical examples of *2-ary* (two parameter) connectives which are functionally complete are NAND and NOR. In the *N-ary* case, necessary and sufficient conditions for functional completeness are derived from Post's lattice. The conditions are outlined below:
 
 Let $`B = \{0,1\}`$, and $f: B^n \to B$. Then, $f$ is functionally complete if none of the following conditions hold:
 
