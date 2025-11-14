@@ -10,7 +10,7 @@ Let $`B = \{0,1\}`$, and $f: B^n \to B$. Then, $f$ is functionally complete if n
 4. $f$ is monotonic with respect to the partial order ⪯, where $(x_1, x_2, ... x_n) ⪯ (y_1, y_2, ... y_n)$ iff $x_i <= y_i$.
 5. $f$ is affine, i.e., can be expressed as $f(x_1, \dots, x_n) = a_0 \oplus a_1 x_1 \oplus \cdots \oplus a_n x_n,\quad a_i \in B$, where $\oplus$ denotes addition mod 2.
 
-The first four conditions are relatively quick to preform. Thus, the bulk of the work is determining whether or not $f$ is affine. This is done by efficiently generating the Algebraic Normal Form (ANF) via a divide-and-conquer butterfly algorithm of $f$ as outlined in [this paper](https://www.sciencedirect.com/science/article/pii/S0304397519307674), and checking that degree of $f$ is equal to 1.
+The first four conditions are relatively quick to preform. Thus, the bulk of the work is determining whether or not $f$ is affine. This is done by efficiently generating the Algebraic Normal Form (ANF) via a divide-and-conquer butterfly algorithm of $f$ as outlined in [this paper](https://www.sciencedirect.com/science/article/pii/S0304397519307674), and checking that degree of $f$ is equal to 1. An extremely similar algorithm is used when computing the Fast Fourier Transform (minus the degree-checking).
 
 For arity $n<6$, truth-tables are packed into `uint64_t's` for efficient access and modification through bitshifts. Larger truth-tables are packed into `std::vector<uint64_t>`.
 
