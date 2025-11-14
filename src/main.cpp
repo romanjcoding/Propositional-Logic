@@ -1,6 +1,3 @@
-// TODO. 
-// update_progress is quite slow
-
 #include "cli.h"
 #include "posts_criterion.h"
 #include "sampling.h"
@@ -51,8 +48,7 @@ int main(int argc, char** argv) {
             print_progress(i, num_samples);
         }
     }
-    std::cout << "Sampled " << num_samples << " / " << num_samples
-              << " arity-" << arity << " functions.\n";
+    std::cout << "Sampled " << num_samples  << " arity-" << arity << " functions.\n";
     std::cout << count << " were functionally complete\n";
     return 0;
 }
