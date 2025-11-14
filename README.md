@@ -15,7 +15,9 @@ The first four conditions are relatively quick to preform. Thus, the bulk of the
 For arity $n<6$, truth-tables are packed into `uint64_t's` for efficient access and modification through bitshifts. Larger truth-tables are packed into `std::vector<uint64_t>`.
 
 ## Build
-This project uses CMake.
+This project uses CMake. This project is cross-platform as long as you have a C++20-capable compiler (g++, clang++, or MSVC), and CMake 3.16+.
+
+To compile, run the following commands:
 
 ```bash
 # Clone the repository
@@ -27,3 +29,17 @@ mkdir build
 cd build
 cmake ..
 cmake --build .
+```
+
+From the `build/` directory, after a successful build:
+
+```bash
+
+# USAGE: 
+./propositional_logic <arity:int> <num_samples:unit64_t | "all">
+
+# Sample 1,000,000 random 5-ary connectives
+./propositional_logic 5 1000000 
+
+# Exhaustively test all 4-ary connectives
+./propositional_logic 4 all
